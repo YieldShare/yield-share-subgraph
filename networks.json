@@ -3,6 +3,10 @@
     "YieldShareFactory": {
       "address": "0x7DB2E4dBB2a34141caCd405e38CE00790b539Ef2",
       "startBlock": 37784328
+    },
+    "YieldShare": {
+      "address": "0x983c64B250432C4B837E11a3b6A33Ec99573FBE4",
+      "startBlock": 37784328
     }
   }
 }

@@ -4,15 +4,18 @@
   "scripts": {
     "codegen": "graph codegen",
     "build": "graph build",
-    "deploy": "graph deploy --node https://api.thegraph.com/deploy/ yield-share/yield-share",
-    "create-local": "graph create --node http://localhost:8020/ yield-share/yield-share",
-    "remove-local": "graph remove --node http://localhost:8020/ yield-share/yield-share",
-    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 yield-share/yield-share",
+    "deploy": "graph deploy --node https://api.thegraph.com/deploy/ yieldshare/yieldshare",
+    "create-local": "graph create --node http://localhost:8020/ yieldshare/yieldshare",
+    "remove-local": "graph remove --node http://localhost:8020/ yieldshare/yieldshare",
+    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 yieldshare/yieldshare",
+    "deploy-mumbai": "graph deploy --network mumbai --product hosted-service yieldshare/yieldshare",
     "test": "graph test"
   },
   "dependencies": {
     "@graphprotocol/graph-cli": "0.51.2",
     "@graphprotocol/graph-ts": "0.30.0"
   },
-  "devDependencies": { "matchstick-as": "0.5.0" }
+  "devDependencies": {
+    "matchstick-as": "0.5.0"
+  }
 }

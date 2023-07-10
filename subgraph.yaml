@@ -28,3 +28,38 @@ dataSources:
         - event: YieldShareVaultCreated(address,address)
           handler: handleYieldShareVaultCreated
       file: ./src/yield-share-factory.ts
+  - kind: ethereum
+    name: YieldShare
+    network: mumbai
+    source:
+      address: "0x983c64B250432C4B837E11a3b6A33Ec99573FBE4"
+      abi: YieldShare
+      startBlock: 37784328
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - SharesDeposited
+        - SharesWithdrawn
+        - YieldSharingCollected
+        - YieldSharingStarted
+        - YieldSharingStopped
+      abis:
+        - name: YieldShare
+          file: ./abis/YieldShare.json
+      eventHandlers:
+        - event: SharesDeposited(indexed address,uint256)
+          handler: handleSharesDeposited
+        - event: SharesWithdrawn(indexed address,uint256)
+          handler: handleSharesWithdrawn
+        - event: YieldSharingCollected(indexed address,indexed
+            address,uint256,uint256,uint256)
+          handler: handleYieldSharingCollected
+        - event: YieldSharingStarted(indexed address,indexed
+            address,uint256,uint256,uint8)
+          handler: handleYieldSharingStarted
+        - event: YieldSharingStopped(indexed address,indexed
+            address,uint256,uint256,uint256)
+          handler: handleYieldSharingStopped
+      file: ./src/yield-share.ts
