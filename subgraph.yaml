@@ -28,13 +28,12 @@ dataSources:
         - event: YieldShareVaultCreated(address,address)
           handler: handleYieldShareVaultCreated
       file: ./src/yield-share-factory.ts
+templates:
   - kind: ethereum
     name: YieldShare
     network: mumbai
     source:
-      address: "0x983c64B250432C4B837E11a3b6A33Ec99573FBE4"
       abi: YieldShare
-      startBlock: 37784328
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
