@@ -34,6 +34,13 @@ type YieldShare @entity(immutable: true) {
 
 # YieldShare contracts entities
 
+type Balance @entity {
+  id: Bytes!
+  contract: YieldShare! # address
+  user: Bytes! # address
+  shares: BigInt!
+}
+
 type SharesDeposited @entity(immutable: true) {
   id: Bytes!
   contract: YieldShare! # address

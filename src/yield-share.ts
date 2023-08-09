@@ -1,6 +1,8 @@
+import { BigInt, Bytes } from "@graphprotocol/graph-ts";
 import {
   SharesDeposited as SharesDepositedEvent,
   SharesWithdrawn as SharesWithdrawnEvent,
+  YieldShare,
   YieldSharingCollected as YieldSharingCollectedEvent,
   YieldSharingStarted as YieldSharingStartedEvent,
   YieldSharingStopped as YieldSharingStoppedEvent,
@@ -11,7 +13,22 @@ import {
   YieldSharingCollected,
   YieldSharingStarted,
   YieldSharingStopped,
+  Balance,
 } from "../generated/schema";
+
+function getBalance(contract: Bytes, user: Bytes): Balance {
+  const balanceId = contract.concat(user);
+  let balance = Balance.load(balanceId);
+
+  if (balance == null) {
+    balance = new Balance(balanceId);
+    balance.contract = contract;
+    balance.user = user;
+    balance.shares = BigInt.fromI32(0);
+  }
+
+  return balance;
+}
 
 export function handleSharesDeposited(event: SharesDepositedEvent): void {
   let entity = new SharesDeposited(
@@ -26,6 +43,11 @@ export function handleSharesDeposited(event: SharesDepositedEvent): void {
   entity.transactionHash = event.transaction.hash;
 
   entity.save();
+
+  // Update balance
+  const balance = getBalance(event.address, event.params.user);
+  balance.shares = balance.shares.plus(event.params.shares);
+  balance.save();
 }
 
 export function handleSharesWithdrawn(event: SharesWithdrawnEvent): void {
@@ -41,6 +63,11 @@ export function handleSharesWithdrawn(event: SharesWithdrawnEvent): void {
   entity.transactionHash = event.transaction.hash;
 
   entity.save();
+
+  // Update balance
+  const balance = getBalance(event.address, event.params.user);
+  balance.shares = balance.shares.minus(event.params.shares);
+  balance.save();
 }
 
 export function handleYieldSharingCollected(
@@ -61,6 +88,18 @@ export function handleYieldSharingCollected(
   entity.transactionHash = event.transaction.hash;
 
   entity.save();
+
+  // Update balances
+  const receiverBalance = getBalance(event.address, event.params.to);
+  receiverBalance.shares = receiverBalance.shares.plus(
+    event.params.receiverBalance
+  );
+  receiverBalance.save();
+
+  const treasuryAddress = YieldShare.bind(event.address).TREASURY();
+  const treasuryBalance = getBalance(event.address, treasuryAddress);
+  treasuryBalance.shares = treasuryBalance.shares.plus(event.params.feeBalance);
+  treasuryBalance.save();
 }
 
 export function handleYieldSharingStarted(
@@ -81,6 +120,11 @@ export function handleYieldSharingStarted(
   entity.transactionHash = event.transaction.hash;
 
   entity.save();
+
+  // Update balance
+  const balance = getBalance(event.address, event.params.from);
+  balance.shares = balance.shares.minus(event.params.shares);
+  balance.save();
 }
 
 export function handleYieldSharingStopped(
@@ -101,4 +145,20 @@ export function handleYieldSharingStopped(
   entity.transactionHash = event.transaction.hash;
 
   entity.save();
+
+  // Update balances
+  const senderBalance = getBalance(event.address, event.params.from);
+  senderBalance.shares = senderBalance.shares.plus(event.params.senderBalance);
+  senderBalance.save();
+
+  const receiverBalance = getBalance(event.address, event.params.to);
+  receiverBalance.shares = receiverBalance.shares.plus(
+    event.params.receiverBalance
+  );
+  receiverBalance.save();
+
+  const treasuryAddress = YieldShare.bind(event.address).TREASURY();
+  const treasuryBalance = getBalance(event.address, treasuryAddress);
+  treasuryBalance.shares = treasuryBalance.shares.plus(event.params.feeBalance);
+  treasuryBalance.save();
 }
