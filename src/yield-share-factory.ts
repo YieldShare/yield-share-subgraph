@@ -7,8 +7,9 @@ import {
   OwnershipTransferred,
   TreasuryChanged,
   YieldShareVaultCreated,
+  YieldShare,
 } from "../generated/schema";
-import { YieldShare } from "../generated/templates";
+import { YieldShare as YieldShareTemplate } from "../generated/templates";
 
 export function handleOwnershipTransferred(
   event: OwnershipTransferredEvent
@@ -55,5 +56,9 @@ export function handleYieldShareVaultCreated(
 
   entity.save();
 
-  YieldShare.create(event.params.yieldShare);
+  const yieldShareContract = new YieldShare(event.params.yieldShare);
+  yieldShareContract.vault = event.params.vault;
+  yieldShareContract.save();
+
+  YieldShareTemplate.create(event.params.yieldShare);
 }

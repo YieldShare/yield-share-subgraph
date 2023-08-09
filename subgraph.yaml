@@ -17,6 +17,7 @@ dataSources:
         - OwnershipTransferred
         - TreasuryChanged
         - YieldShareVaultCreated
+        - YieldShare
       abis:
         - name: YieldShareFactory
           file: ./abis/YieldShareFactory.json
@@ -44,6 +45,7 @@ templates:
         - YieldSharingCollected
         - YieldSharingStarted
         - YieldSharingStopped
+        - YieldShare
       abis:
         - name: YieldShare
           file: ./abis/YieldShare.json

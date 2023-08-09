@@ -17,6 +17,7 @@ export function handleSharesDeposited(event: SharesDepositedEvent): void {
   let entity = new SharesDeposited(
     event.transaction.hash.concatI32(event.logIndex.toI32())
   );
+  entity.contract = event.address;
   entity.user = event.params.user;
   entity.shares = event.params.shares;
 
@@ -31,6 +32,7 @@ export function handleSharesWithdrawn(event: SharesWithdrawnEvent): void {
   let entity = new SharesWithdrawn(
     event.transaction.hash.concatI32(event.logIndex.toI32())
   );
+  entity.contract = event.address;
   entity.user = event.params.user;
   entity.shares = event.params.shares;
 
@@ -47,6 +49,7 @@ export function handleYieldSharingCollected(
   let entity = new YieldSharingCollected(
     event.transaction.hash.concatI32(event.logIndex.toI32())
   );
+  entity.contract = event.address;
   entity.from = event.params.from;
   entity.to = event.params.to;
   entity.senderBalance = event.params.senderBalance;
@@ -66,6 +69,7 @@ export function handleYieldSharingStarted(
   let entity = new YieldSharingStarted(
     event.transaction.hash.concatI32(event.logIndex.toI32())
   );
+  entity.contract = event.address;
   entity.from = event.params.from;
   entity.to = event.params.to;
   entity.shares = event.params.shares;
@@ -85,6 +89,7 @@ export function handleYieldSharingStopped(
   let entity = new YieldSharingStopped(
     event.transaction.hash.concatI32(event.logIndex.toI32())
   );
+  entity.contract = event.address;
   entity.from = event.params.from;
   entity.to = event.params.to;
   entity.senderBalance = event.params.senderBalance;
