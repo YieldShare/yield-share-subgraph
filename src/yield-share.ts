@@ -14,6 +14,7 @@ import {
   YieldSharingStarted,
   YieldSharingStopped,
   Balance,
+  YieldSharing,
 } from "../generated/schema";
 
 function getBalance(contract: Bytes, user: Bytes): Balance {
@@ -28,6 +29,26 @@ function getBalance(contract: Bytes, user: Bytes): Balance {
   }
 
   return balance;
+}
+
+function getYieldSharing(
+  contract: Bytes,
+  from: Bytes,
+  to: Bytes
+): YieldSharing {
+  const yieldSharingId = contract.concat(from).concat(to);
+  let yieldSharing = YieldSharing.load(yieldSharingId);
+
+  if (yieldSharing == null) {
+    yieldSharing = new YieldSharing(yieldSharingId);
+    yieldSharing.contract = contract;
+    yieldSharing.from = from;
+    yieldSharing.to = to;
+    yieldSharing.shares = BigInt.fromI32(0);
+    yieldSharing.percentage = 0;
+  }
+
+  return yieldSharing;
 }
 
 export function handleSharesDeposited(event: SharesDepositedEvent): void {
@@ -100,6 +121,15 @@ export function handleYieldSharingCollected(
   const treasuryBalance = getBalance(event.address, treasuryAddress);
   treasuryBalance.shares = treasuryBalance.shares.plus(event.params.feeBalance);
   treasuryBalance.save();
+
+  // Update Yield Sharing
+  const yieldSharing = getYieldSharing(
+    event.address,
+    event.params.from,
+    event.params.to
+  );
+  yieldSharing.shares = event.params.senderBalance;
+  yieldSharing.save();
 }
 
 export function handleYieldSharingStarted(
@@ -125,6 +155,16 @@ export function handleYieldSharingStarted(
   const balance = getBalance(event.address, event.params.from);
   balance.shares = balance.shares.minus(event.params.shares);
   balance.save();
+
+  // Update Yield Sharing
+  const yieldSharing = getYieldSharing(
+    event.address,
+    event.params.from,
+    event.params.to
+  );
+  yieldSharing.shares = event.params.shares;
+  yieldSharing.percentage = event.params.percentage;
+  yieldSharing.save();
 }
 
 export function handleYieldSharingStopped(
@@ -161,4 +201,14 @@ export function handleYieldSharingStopped(
   const treasuryBalance = getBalance(event.address, treasuryAddress);
   treasuryBalance.shares = treasuryBalance.shares.plus(event.params.feeBalance);
   treasuryBalance.save();
+
+  // Update Yield Sharing
+  const yieldSharing = getYieldSharing(
+    event.address,
+    event.params.from,
+    event.params.to
+  );
+  yieldSharing.shares = BigInt.fromI32(0);
+  yieldSharing.percentage = 0;
+  yieldSharing.save();
 }
